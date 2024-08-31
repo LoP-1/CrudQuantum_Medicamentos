@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: botica
+
+  datasource:
+    url: jdbc:mysql://193.203.166.26:3306/u157720781_prueba?useSSL=false&serverTimezone=UTC
+    username: u157720781_AdminMiguel
+    password: Querico_123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
