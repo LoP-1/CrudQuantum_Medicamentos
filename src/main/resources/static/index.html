@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Medicamentos</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+    form {
+        margin-bottom: 20px;
+    }
+    label, input {
+        display: block;
+        margin-bottom: 10px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    table, th, td {
+        border: 1px solid black;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Gestión de Medicamentos</h1>
+
+<!-- Formulario para agregar medicamentos -->
+<form id="medicineForm">
+  <label for="name">Nombre:</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="laboratory">Laboratorio:</label>
+  <input type="text" id="laboratory" name="laboratory" required>
+
+  <label for="dueDate">Fecha de Vencimiento:</label>
+  <input type="date" id="dueDate" name="dueDate" required>
+
+  <button type="submit">Agregar Medicamento</button>
+</form>
+
+<!-- Tabla para mostrar los medicamentos -->
+<table id="medicineTable">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nombre</th>
+    <th>Laboratorio</th>
+    <th>Fecha de Vencimiento</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+  document.getElementById('medicineForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const laboratory = document.getElementById('laboratory').value;
+      const dueDate = document.getElementById('dueDate').value;
+
+      const data = {
+          name: name,
+          laboratory: laboratory,
+          dueDate: dueDate
+      };
+
+      fetch('/medicine', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(medicine => {
+          addMedicineToTable(medicine);
+          document.getElementById('medicineForm').reset();
+      })
+      .catch(error => console.error('Error:', error));
+  });
+
+  function addMedicineToTable(medicine) {
+      const tableBody = document.getElementById('medicineTable').querySelector('tbody');
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+          <td>${medicine.id}</td>
+          <td>${medicine.name}</td>
+          <td>${medicine.laboratory}</td>
+          <td>${medicine.dueDate}</td>
+      `;
+
+      tableBody.appendChild(row);
+  }
+
+  // Obtener todos los medicamentos al cargar la página
+  fetch('/medicine')
+      .then(response => response.json())
+      .then(medicines => {
+          medicines.forEach(medicine => addMedicineToTable(medicine));
+      })
+      .catch(error => console.error('Error:', error));
+</script>
+
+</body>
+</html>
